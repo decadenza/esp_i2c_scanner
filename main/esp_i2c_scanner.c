@@ -14,14 +14,15 @@ static const char* TAG = "main";
 void app_main(void)
 {   
     esp_err_t err = ESP_OK;
+    unsigned int totalFound = 0;
 
     // ANCHOR Configuration.
     i2c_config_t i2c_conf = {
         .mode = I2C_MODE_MASTER,
         .sda_io_num = I2C_SDA,
         .scl_io_num = I2C_SCL,
-        .sda_pullup_en = GPIO_PULLUP_DISABLE, // Internal pullups are around 50k.
-        .scl_pullup_en = GPIO_PULLUP_DISABLE, // Internal pullups are around 50k.
+        .sda_pullup_en = GPIO_PULLUP_DISABLE, // Internal pullups are around 50k. If you have external pull-ups, leave these as disabled.
+        .scl_pullup_en = GPIO_PULLUP_DISABLE, // Internal pullups are around 50k. If you have external pull-ups, leave these as disabled.
         .master.clk_speed = I2C_FREQ_HZ,
         .clk_flags = I2C_SCLK_SRC_FLAG_FOR_NOMAL,
     };
@@ -31,7 +32,7 @@ void app_main(void)
         ESP_LOGE(TAG, "Failed i2c configuration: %s", esp_err_to_name(err));
         abort();
         };
-        
+
     err = i2c_driver_install(0, i2c_conf.mode, 0, 0, 0);
     if(err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to install i2c driver: %s", esp_err_to_name(err));
@@ -43,7 +44,7 @@ void app_main(void)
 
         err = ESP_OK;
 
-        ESP_LOGD(TAG, "Scanning address 0x%2x...", (unsigned int) addr);
+        ESP_LOGD(TAG, "Scanning address 0x%2X...", (unsigned int) addr);
         
         i2c_cmd_handle_t cmd = i2c_cmd_link_create();
         if (!cmd) err = ESP_FAIL;
@@ -65,8 +66,11 @@ void app_main(void)
     end:
         if (cmd) i2c_cmd_link_delete(cmd);
         if(err == ESP_OK) {
-            ESP_LOGI(TAG, "\tFound device at address 0x%2x\n", (unsigned int) addr);
+            ESP_LOGI(TAG, " -- Found device at address 0x%2X", (unsigned int) addr);
+            totalFound++;
         }
     }
+
+    ESP_LOGI(TAG, "Scan finished. Total devices found: %u", totalFound);
 
 }
