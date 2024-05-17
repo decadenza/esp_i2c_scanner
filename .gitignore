@@ -1,0 +1,5 @@
+build/**
+docs/**
+sdkconfig
+.vscode/**
+managed_components/**/.component_hash
