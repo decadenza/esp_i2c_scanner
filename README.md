@@ -1,4 +1,4 @@
-# Basic I2C scanner project for Espressif ESP-IDF
+# Basic I2C address scanner for Espressif ESP-IDF
 
 ## Usage
 1. Configure the definitions at the beginning of the `esp_i2c_scanner.c`.
